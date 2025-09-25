@@ -1,4 +1,4 @@
-from src.services import image_parser, solver, personalized_explanation
+from src.services import image_parser, solver, personalized_explanation, question_generator
 import numpy as np
 from collections import Counter
 
@@ -159,3 +159,33 @@ def process_image_and_solve_with_progress(image, enable_multi_model=True, select
     final_explanation = "\n\n".join([f"### Explanation from {active_models[idx].split('/')[-1] if idx < len(active_models) else f'Model_{idx}'}\n\n" + sol.get("explanation", "") for idx, sol in enumerate(solutions)])
     yield question, final_markdown, answer, final_explanation
     # return question, final_steps, answer
+
+
+def process_image_and_augment_questions(image, num_augmented=3) -> tuple:
+    """
+    Process the image from the given URL, extract the question, and generate augmented questions.
+    Args:
+        image: PIL Image containing the question.
+        num_augmented (int): Number of augmented questions to generate.
+    Returns:
+        tuple: A tuple containing the original question and a list of augmented questions.
+    """
+    image_bytes = io.BytesIO()
+    image.save(image_bytes, format='PNG')
+    image_bytes = image_bytes.getvalue()
+    image_str = base64.b64encode(image_bytes).decode('utf-8')
+    
+    question = image_parser(
+        image_str, 
+        model = "meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8"
+    )
+    print(f"Extracted question: {question}")
+
+    questions_str = question_generator(
+        question, 
+        num_question=num_augmented,
+        model = "meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8"
+    )
+    # augmented_questions = [q.strip() for q in questions_str.split("## Question") if q.strip()]
+    
+    return questions_str
