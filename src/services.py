@@ -161,6 +161,14 @@ def image_parser(
     image_str: str,
     model: str = "gpt-4o"
 ) -> str:
+    """
+    Parse the image to extract question, choices and context in markdown format.
+    Args:
+        image_str (str): The base64 encoded string of the image.
+        model (str): The model to use for parsing the image.
+    Returns:
+    str: The extracted question, choices and context in markdown format.
+    """
     chat_ = [
         {"role": "system", "content": "You are a helpful assistant that can analyze images."},
         {
@@ -182,3 +190,29 @@ def image_parser(
         top_p=0.7,
     )
     return response.choices[0].message.content
+
+
+def question_generator(
+    sample_question = "",
+    level = "high school",
+    model: str = "gpt-4o",
+    num_question: int = 3
+):
+    """
+    Generate a new question similar to the sample question for the specified level.
+    Args:
+        sample_question (str): The sample question to base the new question on.
+        level (str): The level of the students (e.g., "high school", "college").
+        model (str): The model to use for generating the question.
+    Returns:
+        str: The generated question.
+    """
+    prompt = f"Generate {num_question} new question similar to the following question for {level} students. The new question should be different in context but similar in language, difficulty level and structure. Provide the questions in markdown format.\n\nSample Question:\n{sample_question}\n\nSay nothing else.\n\nResponse Template:"
+    response_template = """## Question 1:
+...
+## Question 2: 
+..."""
+    response = generate(prompt + response_template + "New Questions:", model=model)
+
+    print(response)
+    return response
