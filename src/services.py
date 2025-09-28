@@ -174,7 +174,7 @@ def image_parser(
         {
             "role": "user", 
             "content": [
-                {"type": "text", "text": "Extract question, choices and context of the question in markdown from the image. Keep the language same as in the image. Say nothing else such as related fomula or answer."},
+                {"type": "text", "text": "Extract question, choices and context (if existed) of the question in markdown from the image. Keep the language same as in the image. Say nothing else such as related fomula or answer."},
                 {
                     "type": "image_url",
                     "image_url": {
