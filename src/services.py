@@ -129,7 +129,7 @@ def personalized_explanation(
     characteristic = "Yoda",
     language = "Vietnamese",
     model: str = "gpt-4o"
-) -> dict:
+) -> str:
     """
     Generate a personalized explanation of the solution steps based on the user's level.
     Args:
@@ -137,7 +137,7 @@ def personalized_explanation(
         user_level (str): The user's level (e.g., "high school", "college").
         model (str): The model to use for generating the explanation.
     Returns:
-        dict: A dictionary containing the personalized explanation.
+        str: The personalized explanation of the solution steps.
     """
     steps = processed_response.get("steps", [])
     answer = processed_response.get("answer", "")
@@ -154,7 +154,7 @@ def personalized_explanation(
     """
 
     response_language = f"\n\nThe explanation should be in {language}.\n"
-    response = generate(prompt + response_template + response_language + "Response:", model=model)
+    response = generate(prompt + "Response markdown template: \n\n" + response_template + response_language + "Response:", model=model)
     return response
 
 def image_parser(
